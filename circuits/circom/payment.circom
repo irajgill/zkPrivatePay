@@ -1,24 +1,14 @@
-// Confidential payment circuit (simplified)
-// - Note commitments with Pedersen (via circomlibjs compatible parameters)
-// - Merkle inclusion of input notes
-// - Nullifier computation to prevent double-spend
-// - Conservation: sum(inputs) = sum(outputs) + fee
-
 pragma circom 2.1.6;
 
-
 include "circomlib/circuits/poseidon.circom";
-include "circomlib/circuits/eddsa.circom";
-include "circomlib/circuits/bits2num.circom";
-include "circomlib/circuits/merkle/calcwit.circom";
 include "circomlib/circuits/comparators.circom";
+include "merkle.circom";
 
 template NoteCommitment() {
-    // Public params: poseidon hash
-    signal input pk;           // recipient public key (scalar)
-    signal input amount;       // value (private in practice; set as private input)
-    signal input blinding;     // blinding factor
-    signal output commitment;  // poseidon([pk, amount, blinding])
+    signal input pk;
+    signal input amount;
+    signal input blinding;
+    signal output commitment;
 
     component h = Poseidon(3);
     h.inputs[0] <== pk;
@@ -28,9 +18,9 @@ template NoteCommitment() {
 }
 
 template Nullifier() {
-    signal input sk;           // sender secret key
+    signal input sk;
     signal input note_commitment;
-    signal output nullifier;   // poseidon([sk, note_commitment])
+    signal output nullifier;
 
     component h = Poseidon(2);
     h.inputs[0] <== sk;
@@ -39,8 +29,8 @@ template Nullifier() {
 }
 
 template Payment(nIn, nOut, treeHeight) {
-    // Public
-    signal input root;                         // Merkle root of note tree
+    // Public inputs
+    signal input root;
     signal input fee;
 
     // Public outputs
@@ -55,60 +45,61 @@ template Payment(nIn, nOut, treeHeight) {
 
     // Merkle proofs
     signal input merkle_path_elements[nIn][treeHeight];
-    signal input merkle_path_index[nIn][treeHeight]; // 0/1
+    signal input merkle_path_index[nIn][treeHeight];
 
     // Outputs
     signal input out_amounts[nOut];
     signal input out_blindings[nOut];
     signal input out_pks[nOut];
 
-    // Build input commitments and nullifiers
-    var i;
-    var j;
-
+    // Intermediate signals
     signal in_commitments[nIn];
-    for (i = 0; i < nIn; i++) {
-        component nc = NoteCommitment();
-        nc.pk <== in_pks[i];
-        nc.amount <== in_amounts[i];
-        nc.blinding <== in_blindings[i];
-        in_commitments[i] <== nc.commitment;
 
-        component nf = Nullifier();
-        nf.sk <== in_sks[i];
-        nf.note_commitment <== in_commitments[i];
-        out_nullifiers[i] <== nf.nullifier;
+    // PRE-DECLARE ALL COMPONENTS IN INITIAL SCOPE (Circom 2.2+ requirement)
+    component nc[nIn];
+    component nf[nIn];
+    component merkle[nIn];
+    component oc[nOut];
 
-        // Merkle inclusion for each input commitment
-        component c = CalcWit(treeHeight);
-        c.leaf <== in_commitments[i];
-        for (j = 0; j < treeHeight; j++) {
-            c.path_elements[j] <== merkle_path_elements[i][j];
-            c.path_index[j] <== merkle_path_index[i][j];
+    // Build input commitments and nullifiers
+    for (var i = 0; i < nIn; i++) {
+        nc[i] = NoteCommitment();
+        nc[i].pk <== in_pks[i];
+        nc[i].amount <== in_amounts[i];
+        nc[i].blinding <== in_blindings[i];
+        in_commitments[i] <== nc[i].commitment;
+
+        nf[i] = Nullifier();
+        nf[i].sk <== in_sks[i];
+        nf[i].note_commitment <== in_commitments[i];
+        out_nullifiers[i] <== nf[i].nullifier;
+
+        // Merkle inclusion proof
+        merkle[i] = MerkleTreeInclusionProof(treeHeight);
+        merkle[i].leaf <== in_commitments[i];
+        for (var j = 0; j < treeHeight; j++) {
+            merkle[i].pathElements[j] <== merkle_path_elements[i][j];
+            merkle[i].pathIndices[j] <== merkle_path_index[i][j];
         }
-        root === c.root;
+        root === merkle[i].root;
     }
 
     // Build output commitments
+    for (var i = 0; i < nOut; i++) {
+        oc[i] = NoteCommitment();
+        oc[i].pk <== out_pks[i];
+        oc[i].amount <== out_amounts[i];
+        oc[i].blinding <== out_blindings[i];
+        out_commitments[i] <== oc[i].commitment;
+    }
+
+    // Value conservation constraint
     signal sumIn;
-    sumIn <== 0;
-    for (i = 0; i < nIn; i++) {
-        sumIn <== sumIn + in_amounts[i];
-    }
-
     signal sumOut;
-    sumOut <== 0;
-
-    for (i = 0; i < nOut; i++) {
-        component oc = NoteCommitment();
-        oc.pk <== out_pks[i];
-        oc.amount <== out_amounts[i];
-        oc.blinding <== out_blindings[i];
-        out_commitments[i] <== oc.commitment;
-        sumOut <== sumOut + out_amounts[i];
-    }
-
-    // Conservation
+    
+    sumIn <== in_amounts[0] + in_amounts[1];
+    sumOut <== out_amounts[0] + out_amounts[1];
+    
     sumIn === sumOut + fee;
 }
 
