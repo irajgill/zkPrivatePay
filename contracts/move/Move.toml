@@ -1,0 +1,13 @@
+[package]
+name = "zkprivatepay"
+version = "0.0.1"
+
+[addresses]
+zkprivatepay = "0xd5f63b6f126ec4cc12948f0a5b6418d146776353c646fa0fa573f7b6b39af2cb"
+std = "0x1"
+aptos_framework = "0x1"
+aptos_std = "0x1"
+
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework", rev = "main" }
+AptosStdlib    = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-stdlib", rev = "main" }

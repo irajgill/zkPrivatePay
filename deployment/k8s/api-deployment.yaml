@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zkpp-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: zkpp-api }
+  template:
+    metadata:
+      labels: { app: zkpp-api }
+    spec:
+      containers:
+        - name: api
+          image: zkpp/api:latest
+          ports: [{ containerPort: 8080 }]
+          env:
+            - name: PORT
+              value: "8080"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zkpp-api
+spec:
+  selector: { app: zkpp-api }
+  ports:
+    - port: 80
+      targetPort: 8080

@@ -1,0 +1,7 @@
+[package]
+name = "kyc"
+type = "bin"
+version = "0.1.0"
+authors = ["zkPrivatePay"]
+
+[dependencies]
