@@ -57,13 +57,3 @@ See `circuits/README.md`.
 ```bash
 cd frontend && pnpm dev
 ```
-
-## Security & Compliance
-
-- ZK selective disclosure via Semaphore/Iden3-style membership for KYC attestations.
-- Attested verification model with threshold signatures, minimizing on-chain costs.
-- Full audit templates in `docs/` and Move unit tests in `contracts/move/tests`.
-
-## License
-
-MIT
