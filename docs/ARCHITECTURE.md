@@ -15,7 +15,7 @@
 - **Circuits** (`circom`/`noir`): confidential payments; selective disclosure KYC; analytics aggregation.
 - **Verifier Network** (off-chain): validates zk proofs; produces threshold ed25519 signatures.
 - **Move Modules**: verify attestations, control vault, maintain commitments/nullifiers, CLOB bridging, rollups, escrow.
-- **Gateway API**: manages proof jobs, relays txns, provides compliance oracle and analytics endpoints.
+- **Gateway API**: manages proof jobs, relays txns, provides compliance oracle and analytics endpoints. 
 - **Frontend**: Aptos wallet integration; embedded proof generation when possible; encrypted local history.
 - **Bot**: Telegram notifications.
 
