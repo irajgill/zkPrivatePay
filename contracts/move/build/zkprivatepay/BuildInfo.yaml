@@ -12,7 +12,7 @@ compiled_package_info:
     vm: "0000000000000000000000000000000000000000000000000000000000000000"
     vm_reserved: "0000000000000000000000000000000000000000000000000000000000000000"
     zkprivatepay: d5f63b6f126ec4cc12948f0a5b6418d146776353c646fa0fa573f7b6b39af2cb
-  source_digest: 30FBD164EB96CD44AB1E865E7EFE7E4A13C32C45FCD1CF8A4740A1108F648787
+  source_digest: 2A6441151902ACCEE8DA9D0DD02F1CC8A2468C3F6C9602BDD280684C77E34696
   build_flags:
     dev_mode: false
     test_mode: false
@@ -23,7 +23,8 @@ compiled_package_info:
     full_model_generation: true
     install_dir: ~
     force_recompilation: false
-    additional_named_addresses: {}
+    additional_named_addresses:
+      zkprivatepay: d5f63b6f126ec4cc12948f0a5b6418d146776353c646fa0fa573f7b6b39af2cb
     fetch_deps_only: false
     skip_fetch_latest_git_deps: false
     compiler_config:

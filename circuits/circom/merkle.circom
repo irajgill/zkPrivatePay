@@ -1,4 +1,4 @@
-pragma circom 2.1.6;
+pragma circom 2.2.0;
 
 include "circomlib/circuits/poseidon.circom";
 include "circomlib/circuits/mux1.circom";
@@ -32,3 +32,6 @@ template MerkleTreeInclusionProof(levels) {
 
     root <== levelHashes[levels];
 }
+
+// No `component main = ...` here (library-only).
+

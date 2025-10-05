@@ -32,6 +32,9 @@ importers:
       helmet:
         specifier: ^7.0.0
         version: 7.2.0
+      ioredis:
+        specifier: ^5.8.0
+        version: 5.8.0
       jose:
         specifier: ^5.7.0
         version: 5.10.0
@@ -66,6 +69,9 @@ importers:
       '@types/node':
         specifier: ^20.9.0
         version: 20.19.19
+      '@types/pg':
+        specifier: ^8.15.5
+        version: 8.15.5
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.19.19)
@@ -779,6 +785,9 @@ packages:
 
   '@types/pbkdf2@3.1.2':
     resolution: {integrity: sha512-uRwJqmiXmh9++aSu1VNEn3iIxWOhd8AHXNSdlaLfdAAdSTY9jYVeGWnzejM3dvrkbqE3/hyQkQQ29IFATEGlew==}
+
+  '@types/pg@8.15.5':
+    resolution: {integrity: sha512-LF7lF6zWEKxuT3/OR8wAZGzkg4ENGXFNyiV/JeOt9z5B+0ZVwbql9McqX5c/WStFq1GaGso7H1AzP/qSzmlCKQ==}
 
   '@types/qs@6.14.0':
     resolution: {integrity: sha512-eOunJqu0K1923aExK6y8p6fsihYEn/BYuQ4g0CxAAgFc4b/ZLN4CrsRZ55srTdqoiLzU2B2evC+apEIxprEzkQ==}
@@ -4147,6 +4156,12 @@ snapshots:
   '@types/pbkdf2@3.1.2':
     dependencies:
       '@types/node': 20.19.19
+
+  '@types/pg@8.15.5':
+    dependencies:
+      '@types/node': 20.19.19
+      pg-protocol: 1.10.3
+      pg-types: 2.2.0
 
   '@types/qs@6.14.0': {}
 

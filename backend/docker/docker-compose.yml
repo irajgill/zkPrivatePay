@@ -1,29 +1,32 @@
-version: "3.9"
+version: '3.8'
+
 services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: zkpp
+      POSTGRES_DB: zkprivatepay
+      POSTGRES_USER: zkpay_user
+      POSTGRES_PASSWORD: zkpay_pass
     ports:
       - "5432:5432"
     volumes:
-      - pg:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
   redis:
-    image: redis:7
+    image: redis:7-alpine
     ports:
       - "6379:6379"
-  api:
-    build:
-      context: ..
-      dockerfile: Dockerfile
-    image: zkpp/api:dev
-    environment:
-      - PORT=8080
+    volumes:
+      - redis_data:/data
+
+  adminer:
+    image: adminer
     ports:
       - "8080:8080"
     depends_on:
       - postgres
-      - redis
+
 volumes:
-  pg: {}
+  postgres_data:
+  redis_data:
